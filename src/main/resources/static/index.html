@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>My Blog in 24 Hours</title>
+    <!-- Bootstrap js -->
+    <!-- jQuery library -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <!-- Popper JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+
+    <!-- Latest compiled JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+    <!-- /Bootstrap js -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico"/>
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v5.15.4/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet"
+          type="text/css"/>
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800"
+          rel="stylesheet" type="text/css"/>
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="css/styles.css" rel="stylesheet"/>
+    <style>
+
+        .btn-group{
+            padding-top: 50px;
+        }
+
+        .modal-title {
+            color: black;
+        }
+
+        .subheading {
+            padding-top: 20px;
+        }
+
+
+    </style>
+
+    <script>
+        $(document).ready(function () {
+            // HTML 문서를 로드할 때마다 실행합니다.
+            getPosts();
+        })
+
+        function read() {
+            let offset = $('#board').offset(); //선택한 태그의 위치를 반환
+            //animate()메서드를 이용해서 선택한 태그의 스크롤 위치를 지정해서 0.4초 동안 부드럽게 해당 위치로 이동함
+            $('html, body').animate({scrollTop : offset.top}, 400);
+        }
+
+        function toThetop() {
+            let offset = $('#toptop').offset(); //선택한 태그의 위치를 반환
+            //animate()메서드를 이용해서 선택한 태그의 스크롤 위치를 지정해서 0.4초 동안 부드럽게 해당 위치로 이동함
+            $('html, header').animate({scrollTop : offset.top}, 400);
+        }
+
+        function addHTML(id, title, name, contents, modifiedAt) {
+
+            let tempHtml = `<div class="post-preview">
+                                <a href="/api/blogs/detail?id=${id}">
+                                    <h2 class="post-title">${title}</h2>
+                                    <h3 class="post-subtitle">${id} 번째 Post</h3>
+                                </a>
+                                <p class="post-meta">
+                                    Posted by
+                                    <a href="#!">${name}</a>
+                                    on ${modifiedAt}
+                                </p>
+                            </div>`
+            $('#post-list').append(tempHtml);
+        }
+
+        function getPosts() {
+            $('#post-list').empty();
+            $.ajax({
+                type: 'GET',
+                url: '/api/blogs',
+                success: function (response) {
+                    console.log(response);
+                    alert("here we are")
+                    for(let i = 0; i < response.length; i++) {
+                        let message = response[i];
+                        let id = message['id'];
+                        let title = message['title'];
+                        let name = message['name'];
+                        let contents = message['contents'];
+                        let modifiedAt = message['modifiedAt'];
+                        console.log(modifiedAt)
+                        addHTML(id, title, name, contents, modifiedAt)
+                    }
+
+                }
+            })
+        }
+
+        //postbox 빈 채로 post 버튼 누를시
+        function isPostEmpty (title, name, contents) {
+            return !(title === "" || name === "" || contents === "");
+        }
+
+        function writePost() {
+            // 1. 작성한 메모를 불러옵니다.
+            let title = $('#exampleFormControlInput1').val();
+            let name = $('#exampleFormControlInput2').val();
+            let contents = $('#exampleFormControlTextarea1').val();
+            // 2. 작성한 메모가 올바른지 isValidContents 함수를 통해 확인합니다.
+            if (!isPostEmpty(title, name, contents)) {
+                // alert 창 띄우기
+                alert("필수 값 입력 오류!!")
+                return;
+            }
+            // 4. 전달할 data JSON으로 만듭니다.
+            let data = {'title': title, 'name': name, 'contents': contents};
+            // 5. POST /api/memos 에 data를 전달합니다.
+            $.ajax({
+                type: "POST",
+                url: "/api/blogs",
+                contentType: "application/json", // JSON 형식으로 전달함을 알리기
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert('메시지가 성공적으로 작성되었습니다.');
+                    window.location.reload();
+                }
+            });
+        }
+
+
+
+    </script>
+</head>
+<body>
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
+    <div class="container px-4 px-lg-5">
+        <a class="navbar-brand" href="index.html">My Blog</a>
+    </div>
+</nav>
+<!-- Page Header-->
+<header class="masthead" style="background-image: url('assets/img/home-bg.jpg')" id="toptop">
+    <div class="container position-relative px-4 px-lg-5" >
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="site-heading">
+                    <h1>Share Your Thought</h1>
+                    <span class="subheading">Post for 24 Hours</span>
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <button type="button" id="post-button" class="btn btn-secondary btn-lg" data-toggle="modal" data-target="#modal">POST</button>
+                        <div class="modal fade bd-example-modal-lg" id="modal"  role="document" >
+                            <div class="modal-dialog modal-lg" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title" id="exampleModalLabel" >New Post</h5>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="mb-3">
+                                            <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Title">
+                                        </div>
+                                        <div class="mb-3">
+                                            <input type="email" class="form-control" id="exampleFormControlInput2" placeholder="Posted By">
+                                        </div>
+                                        <div class="mb-3">
+                                            <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Contents" rows="8"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                        <button type="button" class="btn btn-primary" onclick="writePost()">Post</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" id="read-button" onclick="read()" class="btn btn-secondary btn-lg">READ</button>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!-- Main Content-->
+<div class="container px-4 px-lg-5" id="board">
+    <div class="row gx-4 gx-lg-5 justify-content-center">
+        <div class="col-md-10 col-lg-8 col-xl-7" id="post-list">
+            <!-- Post preview-->
+            <div class="post-preview">
+                <a href="../templates/post.html">
+                    <h2 class="post-title">Man must explore, and this is exploration at its greatest</h2>
+                    <h3 class="post-subtitle">Problems look mighty small from 150 miles up</h3>
+                </a>
+                <p class="post-meta">
+                    Posted by
+                    <a href="#!">Start Bootstrap</a>
+                    on September 24, 2021
+                </p>
+            </div>
+            <!-- Divider-->
+            <hr class="my-4"/>
+            <!-- Post preview-->
+            <div class="post-preview">
+                <a href="/api/blogs/${id}"><h2 class="post-title">I believe every human has a finite number of heartbeats. I
+                    don't intend to waste any of mine.</h2></a>
+                <p class="post-meta">
+                    Posted by
+                    <a href="#!">Start Bootstrap</a>
+                    on September 18, 2021
+                </p>
+            </div>
+            <!-- Divider-->
+
+            <!-- Divider-->
+            <hr class="my-4"/>
+        </div>
+    </div>
+</div>
+<!-- Footer-->
+<footer class="border-top">
+    <div class="container px-4 px-lg-5">
+        <div class="row gx-4 gx-lg-5 justify-content-center">
+            <button type="button" class="btn btn-secondary btn-lg" onclick="toThetop()">Top</button>
+        </div>
+    </div>
+</footer>
+<!-- Bootstrap core JS-->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- Core theme JS-->
+<script src="js/scripts.js"></script>
+</body>
+</html>
