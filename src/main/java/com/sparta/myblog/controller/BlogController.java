@@ -7,8 +7,10 @@ import com.sparta.myblog.service.BlogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @RestController
@@ -26,7 +28,9 @@ public class BlogController {
 
     @GetMapping("/api/blogs")
     public List<Blog> getBlog() {
-        return blogRepository.findAllByOrderByCreatedAtDesc();
+        LocalDateTime start = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(0,0,0));
+        LocalDateTime end = LocalDateTime.of(LocalDate.now(), LocalTime.of(23,59,59));
+        return blogRepository.findAllByModifiedAtBetweenOrderByCreatedAtDesc(start, end);
     }
 
 //    @GetMapping("/api/blogs/{id}")

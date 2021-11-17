@@ -22,7 +22,6 @@ public class GetController {
         );
         ModelAndView mv = new ModelAndView();
         mv.setViewName("post"); // 뷰의 이름
-
         mv.addObject("data", blog);
         mv.addObject("style", "background-image: url('assets/img/post-bg.jpg')");
 
