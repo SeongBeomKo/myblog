@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
     <meta name="description" content=""/>
     <meta name="author" content=""/>
+    <meta property="og:title" content="blog posting for 24 hours">
+    <meta property="og:description" content="share your thoughts for 24 hours">
+    <meta property="og:image" content="/assets/img/home-bg.jpg">
     <title>My Blog in 24 Hours</title>
     <!-- Bootstrap js -->
     <!-- jQuery library -->
@@ -86,7 +89,7 @@
                 url: '/api/blogs',
                 success: function (response) {
                     console.log(response);
-                    alert("here we are")
+                    //alert("here we are")
                     for(let i = 0; i < response.length; i++) {
                         let message = response[i];
                         let id = message['id'];
