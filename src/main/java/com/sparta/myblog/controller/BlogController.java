@@ -28,7 +28,7 @@ public class BlogController {
 
     @GetMapping("/api/blogs")
     public List<Blog> getBlog() {
-        LocalDateTime start = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.of(0,0,0));
+        LocalDateTime start = LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0,0));
         LocalDateTime end = LocalDateTime.of(LocalDate.now(), LocalTime.of(23,59,59));
         return blogRepository.findAllByModifiedAtBetweenOrderByCreatedAtDesc(start, end);
     }
