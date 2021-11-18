@@ -6,6 +6,7 @@ import com.sparta.myblog.repository.BlogRepository;
 import com.sparta.myblog.service.BlogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -33,10 +34,17 @@ public class BlogController {
         return blogRepository.findAllByModifiedAtBetweenOrderByCreatedAtDesc(start, end);
     }
 
-//    @GetMapping("/api/blogs/{id}")
-//    public Optional<Blog> getOneBlog(@PathVariable Long id) {
-//        return blogRepository.findById(id);
-//    }
+    @GetMapping("/api/blogs/detail")
+    public ModelAndView getOneBlog(@RequestParam Long id) {
+
+        Blog blog = blogRepository.findById(id).orElseThrow(
+                () -> new NullPointerException("")
+        );
+        ModelAndView mv = new ModelAndView();
+        mv.setViewName("post"); // 뷰의 이름
+        mv.addObject("data", blog);
+        return mv;
+    }
 
     @PutMapping("/api/blogs/{id}")
     public Long updateBlog(@PathVariable Long id, @RequestBody BlogRequestDto requestDto) {
