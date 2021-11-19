@@ -15,14 +15,14 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/")
+@RequestMapping("/api")
 public class BlogController {
 
     private final BlogRepository blogRepository;
 
     private final BlogService blogService;
 
-    @PostMapping("/api/blogs")
+    @PostMapping("/blogs")
     public Blog createBlog(@RequestBody BlogRequestDto requestDto) {
         Blog blog = new Blog(requestDto);
         return blogRepository.save(blog);
@@ -47,12 +47,12 @@ public class BlogController {
         return mv;
     }
 
-    @PutMapping("/api/blogs/{id}")
+    @PutMapping("/blogs/{id}")
     public Long updateBlog(@PathVariable Long id, @RequestBody BlogRequestDto requestDto) {
         return blogService.update(id, requestDto);
     }
 
-    @DeleteMapping("/api/blogs/{id}")
+    @DeleteMapping("/blogs/{id}")
     public Long deleteBlog(@PathVariable Long id) {
         blogRepository.deleteById(id);
         return id;

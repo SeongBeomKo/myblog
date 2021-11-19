@@ -69,7 +69,7 @@
         function addHTML(id, title, name, contents, modifiedAt) {
 
             let tempHtml = `<div class="post-preview">
-                                <a href="/blogs/detail?id=${id}">
+                                <a href="/api/blogs/detail?id=${id}">
                                     <h2 class="post-title">${title}</h2>
                                     <h3 class="post-subtitle">${id} 번째 Post</h3>
                                 </a>
@@ -86,7 +86,7 @@
             $('#post-list').empty();
             $.ajax({
                 type: 'GET',
-                url: '/blogs',
+                url: '/api/blogs',
                 success: function (response) {
                     for(let i = 0; i < response.length; i++) {
                         let message = response[i];
