@@ -141,6 +141,16 @@
 <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
     <div class="container px-4 px-lg-5">
         <a class="navbar-brand" href="index.html">My Blog</a>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                <li class="nav-item">
+                    <form class="nav-link px-lg-3 py-3 py-lg-4" id="my_form" method="post" action="/user/logout">
+                        <span th:text="${username}"></span> 님 환영합니다!
+                        <button id="logout-text" type="button" class="btn btn-light btn-sm" style="margin-left: 20px" onclick="document.getElementById('my_form').submit();">Logout</button>
+                    </form>
+                </li>
+            </ul>
+        </div>
     </div>
 </nav>
 <!-- Page Header-->
