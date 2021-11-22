@@ -6,14 +6,14 @@
 .wrap {
     height: 100%;
     width: 100%;
-    background-image: url(img/background.jpg);
+    background-image: url(/assets/img/background.jpg);
     background-position: center;
     background-size: cover;
     position: absolute;
 }
 .form-wrap {
     width: 380px;
-    height: 480px;
+    height: 550px;
     position: relative;
     margin: 6% auto;
     background: #fff;
