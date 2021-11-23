@@ -1,4 +1,4 @@
-package com.sparta.myblog;
+package com.sparta.myblog.security;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
@@ -17,7 +17,7 @@ public class WebMvcConfig {
     @Bean
     public MappingJackson2HttpMessageConverter jsonEscapeConverter() {
         ObjectMapper copy = objectMapper.copy();
-        copy.getFactory().setCharacterEscapes(new com.sparta.myblog.HTMLCharacterEscapes());
+        copy.getFactory().setCharacterEscapes(new HTMLCharacterEscapes());
         return new MappingJackson2HttpMessageConverter(copy);
     }
 }

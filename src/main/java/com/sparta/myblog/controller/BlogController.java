@@ -1,10 +1,13 @@
 package com.sparta.myblog.controller;
 
 import com.sparta.myblog.domain.Blog;
+import com.sparta.myblog.domain.Comment;
 import com.sparta.myblog.dto.BlogRequestDto;
 import com.sparta.myblog.repository.BlogRepository;
-import com.sparta.myblog.service.BlogService;
+import com.sparta.myblog.repository.CommentRepository;
+import com.sparta.myblog.service.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -19,11 +22,12 @@ import java.util.List;
 public class BlogController {
 
     private final BlogRepository blogRepository;
-    private final BlogService blogService;
+    private final CommentRepository commentRepository;
 
     @PostMapping("/blogs")
-    public Blog createBlog(@RequestBody BlogRequestDto requestDto) {
+    public Blog createBlog(@RequestBody BlogRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
         Blog blog = new Blog(requestDto);
+        blog.setName(userDetails.getUser().getNickname());
         return blogRepository.save(blog);
     }
 
@@ -31,24 +35,28 @@ public class BlogController {
     public List<Blog> getBlog() {
         LocalDateTime start = LocalDateTime.of(LocalDate.now(), LocalTime.of(0,0,0));
         LocalDateTime end = LocalDateTime.of(LocalDate.now(), LocalTime.of(23,59,59));
+
         return blogRepository.findAllByModifiedAtBetweenOrderByCreatedAtDesc(start, end);
     }
 
     @GetMapping("/blogs/detail")
-    public ModelAndView getOneBlog(@RequestParam Long id) {
+    public ModelAndView getOneBlog(@RequestParam Long id, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         Blog blog = blogRepository.findById(id).orElseThrow(
                 () -> new NullPointerException("")
         );
+
+        List<Comment> comment = commentRepository.findAllByBlogIdOrderByCreatedAtDesc(id);
+
         ModelAndView mv = new ModelAndView();
         mv.setViewName("post"); // 뷰의 이름
         mv.addObject("data", blog);
+        mv.addObject("commentList", comment);
+        if(userDetails != null) {
+            mv.addObject("user", userDetails.getUser().getNickname());
+        } else
+            mv.addObject("user", "visitor");
         return mv;
-    }
-
-    @PutMapping("/blogs/{id}")
-    public Long updateBlog(@PathVariable Long id, @RequestBody BlogRequestDto requestDto) {
-        return blogService.update(id, requestDto);
     }
 
     @DeleteMapping("/blogs/{id}")

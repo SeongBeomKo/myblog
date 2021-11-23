@@ -27,11 +27,129 @@
     <!-- Core theme CSS (includes Bootstrap)-->
     <link href="/css/styles.css" rel="stylesheet"/>
 
-    <script>
+    <script th:inline="javascript">
+
+        $(document).ready(function () {
+            // HTML 문서를 로드할 때마다 실행합니다.
+            getComments();
+        })
 
         function toMain() {
-            window.location.replace('/')
+            let currentUser = [[${user}]]
+            if(currentUser === "visitor") {
+                window.location.replace('/visitor')
+            } else {
+                window.location.replace('/')
+            }
         }
+
+        function isPostEmpty (contents, blogId) {
+            return !(contents === "" || blogId === "");
+        }
+
+        function writeComment() {
+
+            let contents = $('#exampleFormControlTextarea1').val();
+            let blogId = [[${data.id}]]
+            // 2. 작성한 메모가 올바른지 isValidContents 함수를 통해 확인합니다.
+            if (!isPostEmpty(contents, blogId)) {
+                // alert 창 띄우기
+                alert("필수 값 입력 오류!!")
+                return;
+            }
+            // 4. 전달할 data JSON으로 만듭니다.
+            let data = {'contents': contents, 'blogId': blogId};
+            // 5. POST /api/memos 에 data를 전달합니다.
+            $.ajax({
+                type: "POST",
+                url: "/api/comments",
+                contentType: "application/json", // JSON 형식으로 전달함을 알리기
+                data: JSON.stringify(data),
+                success: function () {
+                    alert('댓글 작성 완료!!.');
+                    window.location.reload();
+                }
+            });
+        }
+
+        function editComment(id) {
+            let contents = $('#edittedContents').val()
+            let blogId = [[${data.id}]]
+
+            if (!isPostEmpty(contents, blogId)) {
+                // alert 창 띄우기
+                alert("필수 값 입력 오류!!")
+                return;
+            }
+
+            let data = {'contents': contents, 'blogId': blogId};
+            $.ajax({
+                type: "PUT",
+                url: "/api/comments/" + id,
+                contentType: "application/json", // JSON 형식으로 전달함을 알리기
+                data: JSON.stringify(data),
+                success: function () {
+                    alert('선택하신 댓글이 수정 되었습니다.');
+                    window.location.reload();
+                }
+            });
+        }
+
+        function deleteComment(id) {
+            $.ajax({
+                type: "DELETE",
+                url: "/api/comments/" + id,
+                contentType: "application/json", // JSON 형식으로 전달함을 알리기
+                success: function () {
+                    alert('선택하신 댓글이 삭제 되었습니다.');
+                    window.location.reload();
+                }
+            });
+        }
+
+        function getComments() {
+            $('#collapse-1').empty();
+            let commentList = [[${commentList}]]
+            for(let i = 0; i < commentList.length; i++) {
+                let contents = commentList[i].contents
+                let nickname = commentList[i].nickname
+                let modifiedAt = commentList[i].modifiedAt
+                let commentId = commentList[i].commentId
+                let tempHtml = `<div class="commented-section mt-2">
+                                    <div class="d-flex flex-row align-items-center commented-user">
+                                        <h5 class="mr-2">${nickname}</h5><span class="dot mb-1"></span><span class="mb-1 ml-2">${modifiedAt}</span>
+                                        <button type="button" onclick="deleteComment(${commentId})" style="margin-left: 150px" class="btn-light btn-sm">X</button>
+                                        <button type="button" data-toggle="modal" data-target="#modal"  style="margin-left: 20px" class="btn-light btn-sm">Edit</button>
+                                         <div class="modal fade bd-example-modal-lg" id="modal"  role="document" >
+                                            <div class="modal-dialog modal-lg" role="document">
+                                                <div class="modal-content">
+                                                    <div class="modal-header">
+                                                        <h5 class="modal-title" id="exampleModalLabel" >New Comment</h5>
+                                                    </div>
+                                                    <div class="modal-body">
+                                                        <div class="mb-3">
+                                                            <textarea class="form-control" id="edittedContents" rows="8">${contents}</textarea>
+                                                        </div>
+                                                    </div>
+                                                    <div class="modal-footer">
+                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                                        <button type="button" class="btn btn-primary" onclick="editComment(${commentId})">edit</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="comment-text-sm"><span>${contents}</span></div>
+                                    <div class="reply-section">
+                                        <div class="d-flex flex-row align-items-center voting-icons"><i class="fa fa-sort-up fa-2x mt-3 hit-voting"></i><i class="fa fa-sort-down fa-2x mb-3 hit-voting"></i><span class="ml-2">1</span><span class="dot ml-2"></span>
+                                            <h6 class="ml-2 mt-1">Reply</h6>
+                                        </div>
+                                    </div>
+                                </div>`
+                $('#collapse-1').append(tempHtml);
+            }
+        }
+
     </script>
 </head>
 <body>
@@ -42,7 +160,7 @@
             <div class="col-md-10 col-lg-8 col-xl-7">
                 <div class="post-heading">
                     <h1 th:text="${data.title}"></h1>
-                    <h2 class="subheading" th:text="${data.id}"> 번째 Post</h2>
+                    <h2 class="subheading" ><span id="blogID" th:text="${data.id}"> </span> 번째 Post</h2>
                     <span class="meta">
                                 Posted by
                                 <span th:text="${data.name}"> </span>
@@ -69,8 +187,31 @@
     <div class="container px-4 px-lg-5">
         <div class="row gx-4 gx-lg-5 justify-content-center">
             <div class="col-md-10 col-lg-8 col-xl-7">
+                <div class="coment-bottom bg-white p-2 px-4">
+                    <div class="d-flex flex-row add-comment-section mt-4 mb-4"><input type="text" id="exampleFormControlTextarea1" class="form-control mr-3" placeholder="Add comment">
+                        <button class="btn btn-secondary" onclick="writeComment()" type="button">Comment</button>
+                    </div>
+                    <div class="collapsable-comment">
+                        <div class="d-flex flex-row justify-content-between align-items-center action-collapse p-2" data-toggle="collapse" aria-expanded="false" aria-controls="collapse-1" href="#collapse-1"><span>Comments</span><i class="fa fa-chevron-down servicedrop"></i></div>
+                        <div id="collapse-1" class="collapse">
+                            <div class="commented-section mt-2">
+                                <div class="d-flex flex-row align-items-center commented-user">
+                                    <h5 class="mr-2">Corey oates</h5><span class="dot mb-1"></span><span class="mb-1 ml-2">4 hours ago</span>
+                                    <button type="button" onclick="deletePost(${id})" style="margin-left: 150px" class="btn-light btn-sm">X</button>
+                                    <button type="button" onclick="deletePost(${id})" style="margin-left: 20px" class="btn-light btn-sm">Edit</button>
+                                </div>
+                                <div class="comment-text-sm"><span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</span></div>
+                                <div class="reply-section">
+                                    <div class="d-flex flex-row align-items-center voting-icons"><i class="fa fa-sort-up fa-2x mt-3 hit-voting"></i><i class="fa fa-sort-down fa-2x mb-3 hit-voting"></i><span class="ml-2">10</span><span class="dot ml-2"></span>
+                                        <h6 class="ml-2 mt-1">Reply</h6>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <ul class="list-inline text-center">
-                    <button type="button" class="btn btn-secondary btn-lg" onclick="toMain()">Main page</button>
+                    <button type="button" class="btn btn-secondary btn-lg" style="margin-top: 20px" onclick="toMain()">Main page</button>
                 </ul>
             </div>
         </div>

@@ -20,9 +20,18 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        User user = userRepository.findByEmail(userDetails.getUsername())
-                .orElseThrow(() -> new UsernameNotFoundException("Can't find " + userDetails.getUsername()));
-        model.addAttribute("username", user.getNickname());
+       // if(userDetails != null) {
+            User user = userRepository.findByEmail(userDetails.getUsername())
+                    .orElseThrow(() -> new UsernameNotFoundException("Can't find " + userDetails.getUsername()));
+            model.addAttribute("username", user.getNickname());
+        //}
+        return "index";
+        //return "login_and_signup";
+    }
+
+    @GetMapping("/visitor")
+    public String visitorPass(Model model) {
+        model.addAttribute("username", "visitor");
         return "index";
     }
 }

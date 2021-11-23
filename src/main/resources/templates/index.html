@@ -76,7 +76,7 @@
                                 <p class="post-meta">
                                     Posted by
                                     <a href="#!">${name}</a>
-                                    on ${modifiedAt}
+                                    on ${modifiedAt} <button type="button" onclick="deletePost(${id})" style="margin-left: 110px" class="btn-light btn-group-sm">X</button>
                                 </p>
                             </div>`
             $('#post-list').append(tempHtml);
@@ -102,23 +102,22 @@
         }
 
         //postbox 빈 채로 post 버튼 누를시
-        function isPostEmpty (title, name, contents) {
-            return !(title === "" || name === "" || contents === "");
+        function isPostEmpty (title, contents) {
+            return !(title === "" || contents === "");
         }
 
         function writePost() {
             // 1. 작성한 메모를 불러옵니다.
             let title = $('#exampleFormControlInput1').val();
-            let name = $('#exampleFormControlInput2').val();
             let contents = $('#exampleFormControlTextarea1').val();
             // 2. 작성한 메모가 올바른지 isValidContents 함수를 통해 확인합니다.
-            if (!isPostEmpty(title, name, contents)) {
+            if (!isPostEmpty(title, contents)) {
                 // alert 창 띄우기
                 alert("필수 값 입력 오류!!")
                 return;
             }
             // 4. 전달할 data JSON으로 만듭니다.
-            let data = {'title': title, 'name': name, 'contents': contents};
+            let data = {'title': title, 'contents': contents};
             // 5. POST /api/memos 에 data를 전달합니다.
             $.ajax({
                 type: "POST",
@@ -132,6 +131,17 @@
             });
         }
 
+        function deletePost(id) {
+            $.ajax({
+                type: "DELETE",
+                url: "/api/blogs/" + id,
+                contentType: "application/json", // JSON 형식으로 전달함을 알리기
+                success: function () {
+                    alert('선택하신 글이 삭제 되었습니다.');
+                    window.location.reload();
+                }
+            });
+        }
 
 
     </script>
@@ -140,7 +150,7 @@
 <!-- Navigation-->
 <nav class="navbar navbar-expand-lg navbar-light" id="mainNav">
     <div class="container px-4 px-lg-5">
-        <a class="navbar-brand" href="index.html">My Blog</a>
+        <a class="navbar-brand">My Blog</a>
         <div class="collapse navbar-collapse" id="navbarResponsive">
             <ul class="navbar-nav ms-auto py-4 py-lg-0">
                 <li class="nav-item">
@@ -172,9 +182,6 @@
                                     <div class="modal-body">
                                         <div class="mb-3">
                                             <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="Title">
-                                        </div>
-                                        <div class="mb-3">
-                                            <input type="email" class="form-control" id="exampleFormControlInput2" placeholder="Posted By">
                                         </div>
                                         <div class="mb-3">
                                             <textarea class="form-control" id="exampleFormControlTextarea1" placeholder="Contents" rows="8"></textarea>
@@ -220,7 +227,7 @@
                 <p class="post-meta">
                     Posted by
                     <a href="#!">Start Bootstrap</a>
-                    on September 18, 2021
+                    on September 18, 2021 <button type="button" style="margin-left: 110px" class="btn-light btn-group-sm">X</button>
                 </p>
             </div>
             <!-- Divider-->

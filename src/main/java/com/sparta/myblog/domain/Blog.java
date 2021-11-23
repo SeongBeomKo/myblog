@@ -3,7 +3,6 @@ package com.sparta.myblog.domain;
 import com.sparta.myblog.dto.BlogRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -15,7 +14,7 @@ import javax.persistence.*;
 public class Blog extends Timestamped {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Column(nullable = false)
     private String title;
@@ -26,7 +25,6 @@ public class Blog extends Timestamped {
 
     public Blog(BlogRequestDto requestDto) {
         this.title = requestDto.getTitle();
-        this.name = requestDto.getName();
         this.contents = requestDto.getContents();
     }
 }

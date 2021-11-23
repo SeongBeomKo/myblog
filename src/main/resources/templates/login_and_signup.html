@@ -94,9 +94,9 @@
                 <form id="login" action="/user/login" method="post" class="input-group">
                     <input type="email" id="login_email" name="username" class="input-field" placeholder="User Email" required>
                     <input type="password" id="login_password" name="password" class="input-field" placeholder="Enter Password" required>
-                    <input type="checkbox" class="checkbox"><span>Remember Password</span>
-                    <div id="login-failed" style="display:none" class="alert alert-danger" role="alert">로그인에 실패하였습니다.</div>
-                    <button class="submit">Login</button>
+                    <div id="login-failed" style="display:none; color: red; font-size: small" class="alert alert-danger" role="alert">로그인에 실패하였습니다.</div>
+                    <button class="submit" style="margin-top: 20px">Login</button>
+                    <button class="submit" style="margin-top: 20px" onclick="location.href='/visitor'">Visit</button>
                 </form>
                 <form id="register" action="" class="input-group">
                     <input type="text" id="nickname" class="input-field" placeholder="nickname" required>
