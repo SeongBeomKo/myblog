@@ -40,8 +40,8 @@
                 if($("#check").is(":checked")){
                     admin = true
                 }
-                console.log(email)
                 let adminToken = $('#adminToken').val();
+
                 if(password !== password2){
                     alert("비밀번호 불일치!!")
                     return;
@@ -49,6 +49,10 @@
                 if (isPostEmpty(nickname, email, password, password2)) {
                     // alert 창 띄우기
                     alert("필수 값 입력 오류!!")
+                    return;
+                }
+                if(admin && adminToken === "") {
+                    alert("관리자 비밀번호를 입력하세요!!")
                     return;
                 }
                 // 4. 전달할 data JSON으로 만듭니다.
@@ -83,8 +87,8 @@
                     <button type="button" class="togglebtn" onclick="register()">REGISTER</button>
                 </div>
                 <div class="social-icons">
-                    <img src="/assets/img/btnG_icon_circle.png" alt="facebook">
-                    <img src="/assets/img/kakaotalk_logo.png" alt="twitter">
+                    <img src="/assets/img/btnG_icon_circle.png" alt="naver">
+                    <img src="/assets/img/kakaotalk_logo.png" onclick="location.href='https://kauth.kakao.com/oauth/authorize?client_id=26406ab53a48dee60ca0a7abbe6b52f0&redirect_uri=http://localhost:8080/user/kakao/callback&response_type=code'" alt="kakao">
                     <img src="/assets/img/gl.png" alt="google">
                 </div>
                 <form id="login" action="/user/login" method="post" class="input-group">

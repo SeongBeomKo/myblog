@@ -19,7 +19,6 @@ import java.util.List;
 public class BlogController {
 
     private final BlogRepository blogRepository;
-
     private final BlogService blogService;
 
     @PostMapping("/blogs")
