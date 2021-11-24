@@ -2,7 +2,7 @@ package com.sparta.myblog.controller;
 
 import com.sparta.myblog.domain.User;
 import com.sparta.myblog.repository.UserRepository;
-import com.sparta.myblog.service.UserDetailsImpl;
+import com.sparta.myblog.security.UserDetailsImpl;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
@@ -20,11 +20,9 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-       // if(userDetails != null) {
             User user = userRepository.findByEmail(userDetails.getUsername())
                     .orElseThrow(() -> new UsernameNotFoundException("Can't find " + userDetails.getUsername()));
             model.addAttribute("username", user.getNickname());
-        //}
         return "index";
         //return "login_and_signup";
     }

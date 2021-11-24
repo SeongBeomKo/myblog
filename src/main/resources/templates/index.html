@@ -48,7 +48,7 @@
 
     </style>
 
-    <script>
+    <script th:inline="javascript">
         $(document).ready(function () {
             // HTML 문서를 로드할 때마다 실행합니다.
             getPosts();
@@ -67,8 +67,10 @@
         }
 
         function addHTML(id, title, name, contents, modifiedAt) {
-
-            let tempHtml = `<div class="post-preview">
+            let username = [[${username}]]
+            let tempHtml = ``
+            if(name === username) {
+                tempHtml = `<div class="post-preview">
                                 <a href="/api/blogs/detail?id=${id}">
                                     <h2 class="post-title">${title}</h2>
                                     <h3 class="post-subtitle">${id} 번째 Post</h3>
@@ -79,6 +81,19 @@
                                     on ${modifiedAt} <button type="button" onclick="deletePost(${id})" style="margin-left: 110px" class="btn-light btn-group-sm">X</button>
                                 </p>
                             </div>`
+            } else {
+                tempHtml = `<div class="post-preview">
+                                <a href="/api/blogs/detail?id=${id}">
+                                    <h2 class="post-title">${title}</h2>
+                                    <h3 class="post-subtitle">${id} 번째 Post</h3>
+                                </a>
+                                <p class="post-meta">
+                                    Posted by
+                                    <a href="#!">${name}</a>
+                                    on ${modifiedAt}
+                                </p>
+                            </div>`
+            }
             $('#post-list').append(tempHtml);
         }
 
@@ -107,6 +122,13 @@
         }
 
         function writePost() {
+
+            let currentUser = [[${username}]]
+            if(currentUser === 'visitor'){
+                alert('로그인이 필요합니다.')
+                window.location.replace('/')
+                return;
+            }
             // 1. 작성한 메모를 불러옵니다.
             let title = $('#exampleFormControlInput1').val();
             let contents = $('#exampleFormControlTextarea1').val();
@@ -132,16 +154,20 @@
         }
 
         function deletePost(id) {
-            $.ajax({
-                type: "DELETE",
-                url: "/api/blogs/" + id,
-                contentType: "application/json", // JSON 형식으로 전달함을 알리기
-                success: function () {
-                    alert('선택하신 글이 삭제 되었습니다.');
-                    window.location.reload();
-                }
-            });
+            if (confirm("정말 삭제하시겠습니까?") === true) {
+                $.ajax({
+                    type: "DELETE",
+                    url: "/api/blogs/" + id,
+                    contentType: "application/json", // JSON 형식으로 전달함을 알리기
+                    success: function () {
+                        alert('선택하신 글이 삭제 되었습니다.');
+                        window.location.reload();
+                    }
+                });
+            }
         }
+
+
 
 
     </script>
@@ -156,7 +182,10 @@
                 <li class="nav-item">
                     <form class="nav-link px-lg-3 py-3 py-lg-4" id="my_form" method="post" action="/user/logout">
                         <span th:text="${username}"></span> 님 환영합니다!
-                        <button id="logout-text" type="button" class="btn btn-light btn-sm" style="margin-left: 20px" onclick="document.getElementById('my_form').submit();">Logout</button>
+                        <button id="logout-text" type="button" class="btn btn-light btn-sm" style="margin-left: 20px" onclick="document.getElementById('my_form').submit();">
+                            <span th:if="${username.equals('visitor')}">로그인 페이지로</span>
+                            <span th:unless="${username.equals('visitor')}">Logout</span>
+                        </button>
                     </form>
                 </li>
             </ul>

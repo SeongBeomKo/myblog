@@ -4,7 +4,7 @@ import com.sparta.myblog.domain.Comment;
 import com.sparta.myblog.dto.CommentRequestDto;
 import com.sparta.myblog.repository.CommentRepository;
 import com.sparta.myblog.service.CommentService;
-import com.sparta.myblog.service.UserDetailsImpl;
+import com.sparta.myblog.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;

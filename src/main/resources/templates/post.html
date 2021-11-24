@@ -48,7 +48,12 @@
         }
 
         function writeComment() {
-
+            let user = [[${user}]]
+            if(user === 'visitor'){
+                alert('로그인이 필요합니다.')
+                window.location.replace('/')
+                return;
+            }
             let contents = $('#exampleFormControlTextarea1').val();
             let blogId = [[${data.id}]]
             // 2. 작성한 메모가 올바른지 isValidContents 함수를 통해 확인합니다.
@@ -96,29 +101,34 @@
         }
 
         function deleteComment(id) {
-            $.ajax({
-                type: "DELETE",
-                url: "/api/comments/" + id,
-                contentType: "application/json", // JSON 형식으로 전달함을 알리기
-                success: function () {
-                    alert('선택하신 댓글이 삭제 되었습니다.');
-                    window.location.reload();
-                }
-            });
+            if (confirm("정말 삭제하시겠습니까?") === true) {
+                $.ajax({
+                    type: "DELETE",
+                    url: "/api/comments/" + id,
+                    contentType: "application/json", // JSON 형식으로 전달함을 알리기
+                    success: function () {
+                        alert('선택하신 댓글이 삭제 되었습니다.');
+                        window.location.reload();
+                    }
+                });
+            }
         }
 
         function getComments() {
             $('#collapse-1').empty();
+            let user = [[${user}]]
             let commentList = [[${commentList}]]
             for(let i = 0; i < commentList.length; i++) {
                 let contents = commentList[i].contents
                 let nickname = commentList[i].nickname
                 let modifiedAt = commentList[i].modifiedAt
                 let commentId = commentList[i].commentId
-                let tempHtml = `<div class="commented-section mt-2">
+                let tempHtml = ``
+                if(user === nickname) {
+                    tempHtml = `<div class="commented-section mt-2">
                                     <div class="d-flex flex-row align-items-center commented-user">
-                                        <h5 class="mr-2">${nickname}</h5><span class="dot mb-1"></span><span class="mb-1 ml-2">${modifiedAt}</span>
-                                        <button type="button" onclick="deleteComment(${commentId})" style="margin-left: 150px" class="btn-light btn-sm">X</button>
+                                        <h5 class="mr-2">${nickname}</h5><span class="dot mb-1"></span><span class="mb-1 ml-2" style="margin-left: 15px">${modifiedAt}</span>
+                                        <button type="button" onclick="deleteComment(${commentId})" style="margin-left: 100px" class="btn-light btn-sm">X</button>
                                         <button type="button" data-toggle="modal" data-target="#modal"  style="margin-left: 20px" class="btn-light btn-sm">Edit</button>
                                          <div class="modal fade bd-example-modal-lg" id="modal"  role="document" >
                                             <div class="modal-dialog modal-lg" role="document">
@@ -140,16 +150,18 @@
                                         </div>
                                     </div>
                                     <div class="comment-text-sm"><span>${contents}</span></div>
-                                    <div class="reply-section">
-                                        <div class="d-flex flex-row align-items-center voting-icons"><i class="fa fa-sort-up fa-2x mt-3 hit-voting"></i><i class="fa fa-sort-down fa-2x mb-3 hit-voting"></i><span class="ml-2">1</span><span class="dot ml-2"></span>
-                                            <h6 class="ml-2 mt-1">Reply</h6>
-                                        </div>
-                                    </div>
                                 </div>`
+                } else {
+                    tempHtml = `<div class="commented-section mt-2">
+                                    <div class="d-flex flex-row align-items-center commented-user">
+                                        <h5 class="mr-2">${nickname}</h5><span class="dot mb-1"></span><span class="mb-1 ml-2" style="margin-left: 15px">${modifiedAt}</span>
+                                    </div>
+                                    <div class="comment-text-sm"><span>${contents}</span></div>
+                                </div>`
+                }
                 $('#collapse-1').append(tempHtml);
             }
         }
-
     </script>
 </head>
 <body>
@@ -211,7 +223,7 @@
                     </div>
                 </div>
                 <ul class="list-inline text-center">
-                    <button type="button" class="btn btn-secondary btn-lg" style="margin-top: 20px" onclick="toMain()">Main page</button>
+                    <button type="button" class="btn btn-secondary btn-lg" style="margin-top: 30px" onclick="toMain()">Main page</button>
                 </ul>
             </div>
         </div>

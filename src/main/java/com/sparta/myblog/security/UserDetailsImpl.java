@@ -1,4 +1,4 @@
-package com.sparta.myblog.service;
+package com.sparta.myblog.security;
 
 import com.sparta.myblog.domain.User;
 import org.springframework.security.core.GrantedAuthority;

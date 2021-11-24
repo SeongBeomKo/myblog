@@ -16,99 +16,54 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
         <!-- /Bootstrap js -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-        <script>
-            $(document).ready(function(){
-                $("#check").change(function(){
-                    if($("#check").is(":checked") === false){
-                        $('#ad').hide();
-                    }else{
-                        $('#ad').show();
-                    }
-                });
-            });
 
-            function isPostEmpty (nickname, email, password, password2) {
-                return (nickname === "" || email === "" || password === "" || password2 === "");
-            }
+        <script th:inline="javascript">
 
-            function signUp() {
-                let nickname = $('#nickname').val();
-                let email = $('#signup_email').val();
-                let password = $('#signup_password').val();
-                let password2 = $('#signup_password2').val();
-                let admin = false
-                if($("#check").is(":checked")){
-                    admin = true
+            $(document).ready(function () {
+                // HTML 문서를 로드할 때마다 실행합니다.
+                let loggedIn = [[${loggedIn}]]
+                console.log(loggedIn)
+                if(loggedIn) {
+                    alert([[${message}]])
+                    window.location.replace('/')
                 }
-                let adminToken = $('#adminToken').val();
-
-                if(password !== password2){
-                    alert("비밀번호 불일치!!")
-                    return;
-                }
-                if (isPostEmpty(nickname, email, password, password2)) {
-                    // alert 창 띄우기
-                    alert("필수 값 입력 오류!!")
-                    return;
-                }
-                if(admin && adminToken === "") {
-                    alert("관리자 비밀번호를 입력하세요!!")
-                    return;
-                }
-                // 4. 전달할 data JSON으로 만듭니다.
-                let data = {'nickname': nickname, 'email': email, 'password': password, 'admin': admin, 'adminToken': adminToken};
-                // 5. POST /api/memos 에 data를 전달합니다.
-                $.ajax({
-                    type: "POST",
-                    url: "/user/signup",
-                    contentType: "application/json", // JSON 형식으로 전달함을 알리기
-                    data: JSON.stringify(data),
-                    success: function () {
-                        alert('회원가입 성공!');
-                        window.location.replace('/user/login');
-                    }
-                });
-            }
-
+            })
         </script>
-        <style>
-            .ifadmin {
-                display: none;
-            }
-        </style>
-
     </head>
     <body>
         <div class="wrap">
             <div class="form-wrap">
                 <div class="button-wrap">
                     <div id="btn"></div>
-                    <button type="button" class="togglebtn" onclick="login()">LOG IN</button>
                     <button type="button" class="togglebtn" onclick="register()">REGISTER</button>
+                    <button type="button" class="togglebtn" onclick="login()">LOG IN</button>
                 </div>
+                <form id="login" action="/user/signup" method="post" class="input-group" style="margin-bottom: 20px">
+                    <input type="text" name="nickname" id="nickname" class="input-field" placeholder="nickname" required>
+                    <input type="email" name="email" id="signup_email" class="input-field" placeholder="Enter email" required>
+                    <input type="password" name="password" id="signup_password" class="input-field" placeholder="Enter Password" required>
+                    <input type="password" id="signup_password2" name="passwordCheck" class="input-field" placeholder="re-enter Password" required>
+                    <button class="submit" style="margin-top: 10px">REGISTER</button>
+                    <button class="submit" style="margin-top: 20px; margin-bottom: 20px" onclick="location.href='/visitor'">Visit</button>
+                    <div class="input-field" style="margin-top: 100px">
+                        <span th:text="${success}"></span><span th:text="${error}"></span><span th:text="${valid_nickname}"></span>
+                        <span th:text="${valid_nickname}"></span> <span th:text="${valid_password}"></span>
+                    </div>
+                </form>
+
                 <div class="social-icons">
                     <img src="/assets/img/btnG_icon_circle.png" alt="naver">
                     <img src="/assets/img/kakaotalk_logo.png" onclick="location.href='https://kauth.kakao.com/oauth/authorize?client_id=26406ab53a48dee60ca0a7abbe6b52f0&redirect_uri=http://localhost:8080/user/kakao/callback&response_type=code'" alt="kakao">
                     <img src="/assets/img/gl.png" alt="google">
                 </div>
-                <form id="login" action="/user/login" method="post" class="input-group">
-                    <input type="email" id="login_email" name="username" class="input-field" placeholder="User Email" required>
-                    <input type="password" id="login_password" name="password" class="input-field" placeholder="Enter Password" required>
-                    <div id="login-failed" style="display:none; color: red; font-size: small" class="alert alert-danger" role="alert">로그인에 실패하였습니다.</div>
+                <form id="register" action="/user/login" method="post" class="input-group">
+                    <input type="email" id="username" name="username" class="input-field" placeholder="User Email" required>
+                    <input type="password" id="password" name="password" class="input-field" placeholder="Enter Password" required>
+                    <div id="login-failed" style="display:none; color: red; font-size: small" class="alert alert-danger" role="alert">이메일 또는 비밀번호를 확인하세요.</div>
                     <button class="submit" style="margin-top: 20px">Login</button>
-                    <button class="submit" style="margin-top: 20px" onclick="location.href='/visitor'">Visit</button>
+
                 </form>
-                <form id="register" action="" class="input-group">
-                    <input type="text" id="nickname" class="input-field" placeholder="nickname" required>
-                    <input type="email" id="signup_email" class="input-field" placeholder="Enter email" required>
-                    <input type="password" id="signup_password" class="input-field" placeholder="Enter Password" required>
-                    <input type="password" id="signup_password2" class="input-field" placeholder="re-enter Password" required>
-                    <div class="ifadmin" id="ad">
-                        <input type="password" id="adminToken" class="input-field" placeholder="Enter admin Password" >
-                    </div>
-                    <input type="checkbox" class="checkbox" name="admin" id="check"><span>admin sign up</span>
-                    <button type="button" class="submit" onclick="signUp()">REGISTER</button>
-                </form>
+
             </div>
         </div>
         <script>
@@ -118,15 +73,17 @@
             
             
             function login(){
-                x.style.left = "50px";
-                y.style.left = "450px";
-                z.style.left = "0";
-            }
-
-            function register(){
                 x.style.left = "-400px";
                 y.style.left = "50px";
                 z.style.left = "110px";
+
+            }
+
+            function register(){
+
+                x.style.left = "50px";
+                y.style.left = "450px";
+                z.style.left = "0";
             }
 
             const href = location.href;

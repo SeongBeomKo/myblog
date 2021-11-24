@@ -1,20 +1,21 @@
 package com.sparta.myblog.service;
 
-import com.sparta.myblog.domain.UserRoleEnum;
 import com.sparta.myblog.domain.User;
 import com.sparta.myblog.dto.SignupRequestDto;
 import com.sparta.myblog.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.Errors;
+import org.springframework.validation.FieldError;
 
-import java.util.Optional;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
-    private static final String ADMIN_TOKEN = "AAABnv/xRVklrnYxKZ0aHgTBcXukeZygoC";
 
     @Autowired
     public UserService(PasswordEncoder passwordEncoder, UserRepository userRepository) {
@@ -25,25 +26,31 @@ public class UserService {
     public void registerUser(SignupRequestDto requestDto) {
         String nickname = requestDto.getNickname();
         String email = requestDto.getEmail();
-        // 회원 ID 중복 확인
-        Optional<User> found = userRepository.findByEmail(email);
-        if (found.isPresent()) {
-            throw new IllegalArgumentException("중복된 사용자 ID 가 존재합니다.");
-        }
+
         //패스워드 암호화
         String password = passwordEncoder.encode(requestDto.getPassword());
 
-        // 사용자 ROLE 확인
-        UserRoleEnum role = UserRoleEnum.USER;
-        if (requestDto.isAdmin()) {
-            if (!requestDto.getAdminToken().equals(ADMIN_TOKEN)) {
-                throw new IllegalArgumentException("관리자 암호가 틀려 등록이 불가능합니다.");
-            }
-            role = UserRoleEnum.ADMIN;
-        }
-        // 여기 방문자 추가
-
-        User user = new User(nickname, password, email, role);
+        User user = new User(nickname, password, email);
         userRepository.save(user);
+    }
+
+    // 회원가입 시, 유효성 체크
+    public Map<String, String> validateHandling(Errors errors) {
+        Map<String, String> validatorResult = new HashMap<>();
+
+        for (FieldError error : errors.getFieldErrors()) {
+            String validKeyName = String.format("valid_%s", error.getField());
+            validatorResult.put(validKeyName, error.getDefaultMessage());
+        }
+        return validatorResult;
+    }
+
+    //이메일주소 중복 체크
+    public boolean checkEmailDuplicate(String email) {
+        return userRepository.existsByEmail(email);
+    }
+    //닉네임 중복 체크
+    public boolean checkNicknameDuplicate(String nickname) {
+        return userRepository.existsByNickname(nickname);
     }
 }
