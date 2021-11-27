@@ -25,8 +25,8 @@ public class BlogController {
 
     @PostMapping("/blogs")
     public Blog createBlog(@RequestBody BlogRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        requestDto.setName(userDetails.getUsername());
         Blog blog = new Blog(requestDto);
-        blog.setName(userDetails.getUser().getNickname());
         return blogRepository.save(blog);
     }
 

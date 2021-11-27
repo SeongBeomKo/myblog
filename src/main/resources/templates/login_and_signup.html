@@ -5,6 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
         <meta name="description" content=""/>
         <meta name="author" content="dddko"/>
+        <meta property="og:title" content="blog posting for 24 hours">
+        <meta property="og:description" content="share your thoughts for 24 hours">
+        <meta property="og:image" content="/assets/img/home-bg.jpg">
         <link rel="stylesheet" type="text/css" href="/css/style.css"/>
         <!-- jQuery library -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -22,7 +25,6 @@
             $(document).ready(function () {
                 // HTML 문서를 로드할 때마다 실행합니다.
                 let loggedIn = [[${loggedIn}]]
-                console.log(loggedIn)
                 if(loggedIn) {
                     alert([[${message}]])
                     window.location.replace('/')
@@ -40,26 +42,25 @@
                 </div>
                 <form id="login" action="/user/signup" method="post" class="input-group" style="margin-bottom: 20px">
                     <input type="text" name="nickname" id="nickname" class="input-field" placeholder="nickname" required>
-                    <input type="email" name="email" id="signup_email" class="input-field" placeholder="Enter email" required>
-                    <input type="password" name="password" id="signup_password" class="input-field" placeholder="Enter Password" required>
-                    <input type="password" id="signup_password2" name="passwordCheck" class="input-field" placeholder="re-enter Password" required>
+                    <input type="email" name="email"  id="signup_email" class="input-field" placeholder="Enter email" required>
+                    <input type="password" name="password"  id="signup_password" class="input-field" placeholder="Enter Password" required>
+                    <input type="password" id="signup_password2"  name="passwordCheck" class="input-field" placeholder="re-enter Password" required>
                     <button class="submit" style="margin-top: 10px">REGISTER</button>
                     <button class="submit" style="margin-top: 20px; margin-bottom: 20px" onclick="location.href='/visitor'">Visit</button>
                     <div class="input-field" style="margin-top: 100px">
-                        <span th:text="${success}"></span><span th:text="${error}"></span><span th:text="${valid_nickname}"></span>
-                        <span th:text="${valid_nickname}"></span> <span th:text="${valid_password}"></span>
+                        <span th:text="${message}"></span>
                     </div>
                 </form>
 
                 <div class="social-icons">
                     <img src="/assets/img/btnG_icon_circle.png" alt="naver">
-                    <img src="/assets/img/kakaotalk_logo.png" onclick="location.href='https://kauth.kakao.com/oauth/authorize?client_id=26406ab53a48dee60ca0a7abbe6b52f0&redirect_uri=http://localhost:8080/user/kakao/callback&response_type=code'" alt="kakao">
+                    <img src="/assets/img/kakaotalk_logo.png" onclick="location.href='https://kauth.kakao.com/oauth/authorize?client_id=26406ab53a48dee60ca0a7abbe6b52f0&redirect_uri=http://ksbfirst.shop/user/kakao/callback&response_type=code'" alt="kakao">
                     <img src="/assets/img/gl.png" alt="google">
                 </div>
                 <form id="register" action="/user/login" method="post" class="input-group">
-                    <input type="email" id="username" name="username" class="input-field" placeholder="User Email" required>
+                    <input type="text" id="username" name="username" class="input-field" placeholder="Enter Nickname" required>
                     <input type="password" id="password" name="password" class="input-field" placeholder="Enter Password" required>
-                    <div id="login-failed" style="display:none; color: red; font-size: small" class="alert alert-danger" role="alert">이메일 또는 비밀번호를 확인하세요.</div>
+                    <div id="login-failed" style="display:none; color: red; font-size: small" class="alert alert-danger" role="alert">닉네임 또는 비밀번호를 확인하세요.</div>
                     <button class="submit" style="margin-top: 20px">Login</button>
 
                 </form>
@@ -91,6 +92,7 @@
             if (queryString === 'error') {
                 const errorDiv = document.getElementById('login-failed');
                 errorDiv.style.display = 'block';
+                alert("닉네임과 비밀번호를 확인하세요.")
             }
         </script>
     </body>

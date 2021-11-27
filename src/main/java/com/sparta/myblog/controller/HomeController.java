@@ -20,7 +20,7 @@ public class HomeController {
 
     @GetMapping("/")
     public String home(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-            User user = userRepository.findByEmail(userDetails.getUsername())
+            User user = userRepository.findByNickname(userDetails.getUsername())
                     .orElseThrow(() -> new UsernameNotFoundException("Can't find " + userDetails.getUsername()));
             model.addAttribute("username", user.getNickname());
         return "index";
