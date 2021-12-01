@@ -2,7 +2,6 @@ package com.sparta.myblog.controller;
 
 import com.sparta.myblog.domain.Comment;
 import com.sparta.myblog.dto.CommentRequestDto;
-import com.sparta.myblog.repository.CommentRepository;
 import com.sparta.myblog.service.CommentService;
 import com.sparta.myblog.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
@@ -14,20 +13,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api")
 public class CommentController {
 
-    private final CommentRepository commentRepository;
     private final CommentService commentService;
 
     @PostMapping("/comments")
     public Comment createComment(@RequestBody CommentRequestDto requestDto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Comment comment = new Comment(requestDto);
-        comment.setNickname(userDetails.getUser().getNickname());
-        return commentRepository.save(comment);
+        return commentService.createComment(requestDto, userDetails);
     }
 
     @DeleteMapping("/comments/{id}")
     public Long deleteComment(@PathVariable Long id) {
-        commentRepository.deleteById(id);
-        return id;
+        return commentService.deleteComment(id);
     }
 
     @PutMapping("/comments/{id}")

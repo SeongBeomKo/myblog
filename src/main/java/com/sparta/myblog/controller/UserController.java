@@ -6,6 +6,7 @@ import com.sparta.myblog.dto.SignupRequestDto;
 import com.sparta.myblog.security.UserDetailsImpl;
 import com.sparta.myblog.service.KakaoUserService;
 import com.sparta.myblog.service.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,17 +15,12 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 @Controller
+@RequiredArgsConstructor
 public class UserController {
 
     private final KakaoUserService kakaoUserService;
     private final SignUpValidator signUpValidator;
     private final UserService userService;
-
-    public UserController(KakaoUserService kakaoUserService, SignUpValidator userValidator, UserService userService) {
-        this.kakaoUserService = kakaoUserService;
-        this.signUpValidator = userValidator;
-        this.userService = userService;
-    }
 
     // 회원 로그인/회원가입 페이지
     @GetMapping("/user/login")

@@ -23,8 +23,15 @@ public class Comment extends Timestamped {
     @Column(nullable = false)
     private Long blogId;
 
-    public Comment(CommentRequestDto requestDto) {
-        contents = requestDto.getContents();
-        blogId = requestDto.getBlogId();
+    public Comment(CommentRequestDto requestDto, String nickname) {
+        this.contents = requestDto.getContents();
+        this.blogId = requestDto.getBlogId();
+        this.nickname = nickname;
+    }
+
+    public long update (CommentRequestDto requestDto){
+        this.contents = requestDto.getContents();
+        this.blogId = requestDto.getBlogId();
+        return commentId;
     }
 }

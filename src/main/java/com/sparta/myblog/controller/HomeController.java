@@ -1,30 +1,22 @@
 package com.sparta.myblog.controller;
 
-import com.sparta.myblog.domain.User;
-import com.sparta.myblog.repository.UserRepository;
 import com.sparta.myblog.security.UserDetailsImpl;
+import com.sparta.myblog.service.HomeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
+@RequiredArgsConstructor
 public class HomeController {
 
-    private final UserRepository userRepository;
-
-    public HomeController(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    private final HomeService homeService;
 
     @GetMapping("/")
     public String home(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-            User user = userRepository.findByNickname(userDetails.getUsername())
-                    .orElseThrow(() -> new UsernameNotFoundException("Can't find " + userDetails.getUsername()));
-            model.addAttribute("username", user.getNickname());
-        return "index";
-        //return "login_and_signup";
+           return homeService.home(model, userDetails);
     }
 
     @GetMapping("/visitor")

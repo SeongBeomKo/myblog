@@ -5,9 +5,6 @@ import com.sparta.myblog.repository.UserRepository;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.annotation.Validated;
-
-import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
